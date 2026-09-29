@@ -164,26 +164,26 @@ e editar o título; os dados alterados aparecem na listagem e no detalhe. Acessa
   - `EmpresaSugestoesView`: `GET ?q=`.
 
   Registrar as rotas `oportunidades`, `oportunidades/<int:pk>` e `empresas` em `backend/comercial/urls.py`. Rodar `make test`: T026 deve passar.
-- [ ] T030 [P] [US1] Criar `frontend/app/routes/empresas.sugestoes.ts` (resource route): o loader lê `q` e devolve `Response.json(await sugerirEmpresas(q))`; em caso de erro, devolve `[]`
-- [ ] T031 [P] [US1] Criar `frontend/app/features/oportunidades/components/EmpresaInput.tsx`: `Input` de texto com `name="empresa"`, `autoComplete="off"`, `defaultValue` e `error`, usando `useFetcher<Empresa[]>()`. Ao digitar, faz `fetcher.load("/empresas/sugestoes?q=...")` com debounce de 250 ms. Mostra uma lista suspensa (`role="listbox"`) com as sugestões, navegável com ↑/↓, Enter e Esc; clicar ou pressionar Enter preenche o campo e fecha a lista. Sem sugestões, nada aparece. O texto livre continua válido (FR-003)
-- [ ] T032 [US1] Criar `frontend/app/features/oportunidades/components/OportunidadeForm.tsx`: um `<Form method="post" noValidate>` com as props `valores` (`titulo`, `empresa`, `valor`, `estagio`), `campos` (erros por campo), `erroGeral?`, `mostrarEstagio: boolean`, `rotuloEnviar` e `rotuloEnviando`. Campos:
+- [X] T030 [P] [US1] Criar `frontend/app/routes/empresas.sugestoes.ts` (resource route): o loader lê `q` e devolve `Response.json(await sugerirEmpresas(q))`; em caso de erro, devolve `[]`
+- [X] T031 [P] [US1] Criar `frontend/app/features/oportunidades/components/EmpresaInput.tsx`: `Input` de texto com `name="empresa"`, `autoComplete="off"`, `defaultValue` e `error`, usando `useFetcher<Empresa[]>()`. Ao digitar, faz `fetcher.load("/empresas/sugestoes?q=...")` com debounce de 250 ms. Mostra uma lista suspensa (`role="listbox"`) com as sugestões, navegável com ↑/↓, Enter e Esc; clicar ou pressionar Enter preenche o campo e fecha a lista. Sem sugestões, nada aparece. O texto livre continua válido (FR-003)
+- [X] T032 [US1] Criar `frontend/app/features/oportunidades/components/OportunidadeForm.tsx`: um `<Form method="post" noValidate>` com as props `valores` (`titulo`, `empresa`, `valor`, `estagio`), `campos` (erros por campo), `erroGeral?`, `mostrarEstagio: boolean`, `rotuloEnviar` e `rotuloEnviando`. Campos:
   - Título (obrigatório);
   - Empresa (`EmpresaInput`, obrigatório);
   - Valor (R$) com prefixo "R$", `inputMode="decimal"`, `type="text"`;
   - Estágio (`Select` com Lead, Contato e Proposta, só se `mostrarEstagio`).
 
   O `<Alert variant="error">` com `erroGeral` fica no topo. Durante o envio (`useNavigation().state === "submitting"`), os campos e os botões ficam desabilitados e o botão principal mostra spinner + `rotuloEnviando`. Botão "Cancelar" leva para `/oportunidades` (Link). Os valores digitados persistem após um erro, via `defaultValue` + `key` que muda a cada resposta da action.
-- [ ] T033 [US1] Implementar `frontend/app/routes/oportunidades.nova.tsx`:
+- [X] T033 [US1] Implementar `frontend/app/routes/oportunidades.nova.tsx`:
   - `action`: lê o `formData` e chama `criarOportunidade`. Sucesso → `redirect(`/oportunidades/${id}`)`. Erro → `data({ ok: false, ...erro, valores }, { status: erro.status })`.
   - Componente: título "Nova oportunidade" + subtítulo do protótipo, `OportunidadeForm` com `mostrarEstagio`, "Criar oportunidade"/"Criando…" e `campos`/`erroGeral` vindos de `useActionData` (o `erroGeral` usa `mensagemDeErro` quando `codigo !== "validacao"`).
   - `meta` com o título da página.
-- [ ] T034 [P] [US1] Criar `frontend/app/features/oportunidades/components/TabelaOportunidades.tsx`: tabela do protótipo com as colunas Título, Empresa, Valor, Estágio (`StageBadge`) e Pedido (selo verde "Pedido #{numero}" para `GERADO`; selo vermelho "Falha no pedido" para `FALHOU`; vazio sem pedido). A linha inteira é clicável e o título é um `<Link>` para `/oportunidades/{id}`, acessível por teclado. Em telas estreitas, o contêiner tem `overflow-x-auto`
-- [ ] T035 [US1] Implementar `frontend/app/routes/oportunidades._index.tsx` (versão inicial, sem filtros):
+- [X] T034 [P] [US1] Criar `frontend/app/features/oportunidades/components/TabelaOportunidades.tsx`: tabela do protótipo com as colunas Título, Empresa, Valor, Estágio (`StageBadge`) e Pedido (selo verde "Pedido #{numero}" para `GERADO`; selo vermelho "Falha no pedido" para `FALHOU`; vazio sem pedido). A linha inteira é clicável e o título é um `<Link>` para `/oportunidades/{id}`, acessível por teclado. Em telas estreitas, o contêiner tem `overflow-x-auto`
+- [X] T035 [US1] Implementar `frontend/app/routes/oportunidades._index.tsx` (versão inicial, sem filtros):
   - `loader` no servidor: chama `listarOportunidades({})`; em caso de erro, `throw data(erro, { status })`.
   - Componente: título "Oportunidades", `TabelaOportunidades` e, quando `total_cadastradas === 0`, `EmptyState` "Nenhuma oportunidade ainda" + botão "Nova oportunidade".
   - `ErrorBoundary` → `ErrorState`.
   - `meta`.
-- [ ] T036 [US1] Implementar `frontend/app/routes/oportunidades.$id.tsx` (versão inicial):
+- [X] T036 [US1] Implementar `frontend/app/routes/oportunidades.$id.tsx` (versão inicial):
   - `loader`: `obterOportunidade(params.id)`; 404 → `throw data(null, { status: 404 })`; outros erros → `throw data(erro, { status })`.
   - Layout em grade `md:grid-cols-[1fr_320px]` (uma coluna no celular):
     - link "Voltar";
@@ -192,7 +192,7 @@ e editar o título; os dados alterados aparecem na listagem e no detalhe. Acessa
     - as áreas da barra de estágios (US3) e do card Pedido (US2) ficam vazias por ora.
   - `ErrorBoundary`: 404 → `NaoEncontrado`; demais erros → `ErrorState`.
   - `meta` com o título da oportunidade.
-- [ ] T037 [US1] Implementar `frontend/app/routes/oportunidades.$id.editar.tsx`:
+- [X] T037 [US1] Implementar `frontend/app/routes/oportunidades.$id.editar.tsx`:
   - `loader`: igual ao do detalhe.
   - `action`: `editarOportunidade(id, { titulo, empresa, valor })`. Sucesso → `redirect` para o detalhe. Erro → `data({ ok: false, ...erro, valores }, { status })`.
   - Componente: título "Editar oportunidade", `OportunidadeForm` sem estágio, pré-preenchido com os dados do loader (valor convertido para texto sem formatação), "Salvar alterações"/"Salvando…" e "Cancelar" levando ao detalhe.
