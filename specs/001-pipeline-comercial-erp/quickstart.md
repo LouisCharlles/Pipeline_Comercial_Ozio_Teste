@@ -12,13 +12,11 @@ payload estão em [contracts/api.md](./contracts/api.md) e as regras em
 
 ## Subir o ambiente
 
-```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+Um terminal por serviço. Os `.env` são opcionais: os padrões batem com o compose.
 
-make db          # docker compose up -d db
-make backend     # venv + pip install + migrate + runserver :8000
-make seed        # python manage.py popular_demo (dados do protótipo)
+```bash
+make backend     # sobe o PostgreSQL, cria o venv, aplica migrações e roda a API em :8000
+make seed        # recria os dados do protótipo (APAGA os dados atuais)
 make frontend    # npm install + npm run dev (:5173)
 ```
 
@@ -29,21 +27,25 @@ oportunidades.
 
 ```bash
 make test        # sobe o PostgreSQL e cria o venv se preciso; roda o pytest do backend
-make typecheck   # react-router typegen && tsc --noEmit no frontend
+make typecheck   # react-router typegen && tsc no frontend
 ```
 
-Resultado esperado: todos os testes passam, inclusive `test_pedido_concorrente_10_requisicoes` e
-um teste por modo de falha do ERP.
+Resultado esperado: todos os testes passam (112 na entrega), inclusive
+`test_10_requisicoes_simultaneas_geram_um_unico_pedido`,
+`test_10_retries_simultaneos_chamam_o_erp_uma_vez` e um teste por modo de falha do ERP. Num clone
+limpo, `make test` sozinho sobe o banco e cria o venv.
 
 ## Cenários de validação manual
 
 ### 1. SSR da listagem (FR-017, SC-005)
 
 ```bash
-curl -s "http://localhost:5173/oportunidades?estagio=GANHO" | grep -c "<tr"
+curl -s "http://localhost:5173/oportunidades?estagio=GANHO" | grep -o "<tr" | wc -l
 ```
 
-O HTML já vem com as linhas da tabela, sem skeleton. Com JavaScript desativado no navegador, a
+Resultado esperado com o seed: `5` (cabeçalho + 4 oportunidades em Ganho). O HTML já vem com as
+linhas da tabela, sem indicador de carregamento. Use `grep -o … | wc -l`, e não `grep -c`: o
+HTML vem numa linha só, e `grep -c` conta linhas. Com JavaScript desativado no navegador, a
 listagem, os chips e a busca continuam funcionando.
 
 ### 2. Cadastro, detalhe e edição (US1)
@@ -82,7 +84,8 @@ estágios aparece bloqueada.
 
 Para cada modo `timeout`, `erro` e `resposta_invalida`:
 
-1. Ajuste `ERP_MODO=<modo>` em `backend/.env` e reinicie `make backend`.
+1. Ajuste `ERP_MODO=<modo>` em `backend/.env` e reinicie `make backend` (ou, sem `.env`, rode
+   `ERP_MODO=<modo> make backend`).
 2. Clique em "Gerar pedido": aparece a mensagem específica do modo, com as tentativas e o botão
    "Tentar novamente". A listagem mostra "Falha no pedido".
 3. Volte para `ERP_MODO=sucesso`, reinicie e clique em "Tentar novamente": o pedido é gerado com
