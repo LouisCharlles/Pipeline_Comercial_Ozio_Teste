@@ -162,12 +162,14 @@ busca por trecho de nome de empresa e busca por trecho de título, conferindo os
 ### Edge Cases
 
 - Dois vendedores (ou duas abas) acionam "Gerar pedido" ao mesmo tempo para a mesma oportunidade:
-  apenas um pedido existe ao final; a outra solicitação recebe o pedido existente ou o aviso de
-  que o pedido está em processamento, nunca um erro genérico.
+  as solicitações são atendidas uma de cada vez e apenas um pedido existe ao final. A que chega
+  depois recebe o pedido já gerado ou, se a anterior falhou, o resultado de uma nova tentativa
+  sobre o mesmo registro; nunca um erro genérico nem um segundo pedido.
 - O ERP excede o tempo limite, mas pode ter criado o pedido do lado dele: a nova tentativa usa a
   mesma referência da oportunidade, permitindo ao ERP reconhecer a repetição.
-- O processamento é interrompido no meio da chamada ao ERP, deixando a tentativa sem resultado:
-  ela é exibida como não concluída e pode ser repetida com segurança.
+- O processamento é interrompido no meio da chamada ao ERP: a tentativa é desfeita por inteiro
+  (a oportunidade volta à situação anterior: sem pedido ou com a falha anterior registrada), o
+  vendedor vê uma mensagem de erro inesperado e pode repetir com segurança.
 - Oportunidade em Ganho com tentativa de pedido que falhou é movida para outro estágio: permitido;
   o registro da tentativa falha é mantido e só pode ser retomado quando a oportunidade voltar a
   Ganho.
