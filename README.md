@@ -93,6 +93,30 @@ frontend/app/
 specs/                especificação, plano, contratos e tarefas (Spec Kit)
 ```
 
+## Artefatos de processo
+
+Além de `backend/` e `frontend/`, o repositório guarda o material usado para planejar a solução.
+Nada disso é necessário para rodar o projeto.
+
+- **`specs/001-pipeline-comercial-erp/`**: documentação da funcionalidade, escrita antes do código
+  e mantida junto com ele.
+  - `spec.md`: requisitos (FR-xxx), histórias de usuário e casos de borda. Os comentários no código
+    citam esses identificadores.
+  - `plan.md` e `research.md`: arquitetura e decisões com alternativas avaliadas (R1, R2...).
+  - `data-model.md`: entidades, constraints e transições de estágio.
+  - `contracts/`: contrato da API REST (`api.md`) e das rotas do frontend (`ui-rotas.md`).
+  - `tasks.md`: lista de tarefas ordenada por dependência, que guiou os commits.
+  - `quickstart.md`: roteiro de validação manual.
+  - `checklists/`: checklist de qualidade dos requisitos.
+- **`pesquisa/`**: notas de estudo feitas antes da especificação, sobre modelagem e UX de CRMs
+  (Odoo, Twenty, Pipedrive, HubSpot). Nenhum código foi copiado.
+- **`.specify/`**: estrutura do [Spec Kit](https://github.com/github/spec-kit), com templates,
+  scripts e a constituição do projeto (`memory/constitution.md`), que define os princípios
+  seguidos (simplicidade, integridade do pedido, ERP isolado, testes das regras de negócio,
+  commits pequenos).
+- **`.claude/skills/`**: comandos do Spec Kit para o Claude Code (`/speckit-specify`,
+  `/speckit-plan`, `/speckit-tasks`...), usados como assistente em cada etapa.
+
 ## Decisões técnicas
 
 ### Um pedido por oportunidade
