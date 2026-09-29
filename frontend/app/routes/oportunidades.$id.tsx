@@ -1,12 +1,15 @@
-import { isRouteErrorResponse, Link } from "react-router";
+import { data, isRouteErrorResponse, Link } from "react-router";
 
 import { classesBotao } from "../components/ui/Button";
 import { ErrorState } from "../components/ui/ErrorState";
 import { NaoEncontrado } from "../components/ui/NaoEncontrado";
 import { StageBadge } from "../components/ui/StageBadge";
 import { VoltarLink } from "../components/ui/VoltarLink";
+import { gerarPedido } from "../features/oportunidades/api.server";
 import { carregarOportunidade } from "../features/oportunidades/carregar.server";
+import { CardPedido } from "../features/oportunidades/components/CardPedido";
 import { formatarData, formatarMoeda } from "../features/oportunidades/formato";
+import type { ResultadoAcao } from "../features/oportunidades/types";
 import type { Route } from "./+types/oportunidades.$id";
 
 export function meta({ loaderData }: Route.MetaArgs) {
@@ -15,6 +18,20 @@ export function meta({ loaderData }: Route.MetaArgs) {
 
 export async function loader({ params }: Route.LoaderArgs) {
   return carregarOportunidade(params.id);
+}
+
+// Erros de ação voltam com status 200 de propósito: assim o React Router revalida o loader e a
+// tela mostra o estado gravado (ex.: pedido FALHOU com tentativas), não só a mensagem.
+export async function action({ request, params }: Route.ActionArgs): Promise<ResultadoAcao> {
+  const form = await request.formData();
+  const intent = form.get("intent");
+
+  if (intent === "gerar-pedido") {
+    const resposta = await gerarPedido(params.id);
+    return resposta.ok ? { ok: true } : { ok: false, ...resposta.erro };
+  }
+
+  throw data({ codigo: "validacao", mensagem: "Ação desconhecida." }, { status: 400 });
 }
 
 export default function DetalheOportunidade({ loaderData: op }: Route.ComponentProps) {
@@ -59,6 +76,8 @@ export default function DetalheOportunidade({ loaderData: op }: Route.ComponentP
             </div>
           </section>
         </div>
+
+        <CardPedido oportunidade={op} />
       </div>
     </div>
   );

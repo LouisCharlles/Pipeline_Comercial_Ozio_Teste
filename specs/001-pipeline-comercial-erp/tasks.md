@@ -267,12 +267,12 @@ máximo um pedido e o card mostra o estado real (quickstart, roteiros 4, 5 e 6).
   - `IntegrityError` → busca de novo e devolve `(pedido_existente, False)`.
   - Registrar no log (`logging.getLogger(__name__)`) cada tentativa, com o resultado e a referência.
 - [X] T044 [US2] Adicionar `GerarPedidoView` (`POST`, sem corpo) em `backend/comercial/views.py`, que chama `gerar_pedido` e devolve `PedidoSerializer` com 201 se `criado`, senão 200. Registrar `oportunidades/<int:pk>/pedido` em `backend/comercial/urls.py`. Rodar `make test`: T038–T040 devem passar
-- [ ] T045 [P] [US2] Criar `frontend/app/features/oportunidades/components/CardPedido.tsx` com as props `oportunidade`, `erro?: ErroApi` (resultado da última ação) e `ocupado: boolean`. Título "Pedido no ERP" com ícone, e os 7 estados da tabela "Card Pedido no ERP" de [contracts/ui-rotas.md](./contracts/ui-rotas.md):
+- [X] T045 [P] [US2] Criar `frontend/app/features/oportunidades/components/CardPedido.tsx` com as props `oportunidade`, `erro?: ErroApi` (resultado da última ação) e `ocupado: boolean`. Título "Pedido no ERP" com ícone, e os 7 estados da tabela "Card Pedido no ERP" de [contracts/ui-rotas.md](./contracts/ui-rotas.md):
   - indisponível, sem valor (com link "Editar"), pronto, enviando (spinner + "Gerando pedido…" + "Comunicando com o ERP. Aguarde."), gerado, falhou e falhou fora de Ganho;
   - o botão fica num `fetcher.Form method="post"` com `<input type="hidden" name="intent" value="gerar-pedido">`, usando `useFetcher({ key: "gerar-pedido" })`;
   - no estado falhou, a mensagem do `Alert` vem de `ultimo_erro_tipo` (mapeado para o texto de R5) e vale mesmo depois de recarregar a página;
   - um `erro` de ação que não seja do ERP (por exemplo, 409 `estagio_invalido` ou `rede`) aparece num `Alert` acima do botão, com `mensagemDeErro`.
-- [ ] T046 [US2] Adicionar ao `frontend/app/routes/oportunidades.$id.tsx` a `action`, que lê `intent`: `gerar-pedido` → `gerarPedido(id)`. Sucesso → `{ ok: true }`. Erro → `{ ok: false, ...erro }` **com status 200**, para que o React Router revalide o loader e o card reflita o FALHOU persistido. `intent` desconhecido → 400. Renderizar `CardPedido` na coluna direita, com `ocupado = fetcher.state !== "idle"` e `erro = fetcher.data?.ok === false ? fetcher.data : undefined`
+- [X] T046 [US2] Adicionar ao `frontend/app/routes/oportunidades.$id.tsx` a `action`, que lê `intent`: `gerar-pedido` → `gerarPedido(id)`. Sucesso → `{ ok: true }`. Erro → `{ ok: false, ...erro }` **com status 200**, para que o React Router revalide o loader e o card reflita o FALHOU persistido. `intent` desconhecido → 400. Renderizar `CardPedido` na coluna direita, com `ocupado = fetcher.state !== "idle"` e `erro = fetcher.data?.ok === false ? fetcher.data : undefined`
 
 **Checkpoint**: roteiros 4, 5 e 6 do [quickstart.md](./quickstart.md) funcionam (com a
 oportunidade em Ganho vinda do seed); os testes obrigatórios passam.
