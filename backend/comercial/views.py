@@ -9,13 +9,14 @@ from comercial.erros import NaoEncontrado
 from comercial.models import Estagio, Oportunidade
 from comercial.serializers import (
     EmpresaSerializer,
+    MudarEstagioSerializer,
     OportunidadeCriacaoSerializer,
     OportunidadeEdicaoSerializer,
     OportunidadeResumoSerializer,
     OportunidadeSerializer,
     PedidoSerializer,
 )
-from comercial.services import empresas, pedidos
+from comercial.services import empresas, estagios, pedidos
 
 
 def _obter_oportunidade(pk: int) -> Oportunidade:
@@ -55,6 +56,14 @@ class OportunidadeDetalheView(APIView):
         entrada = OportunidadeEdicaoSerializer(oportunidade, data=request.data, partial=True)
         entrada.is_valid(raise_exception=True)
         entrada.save()
+        return Response(OportunidadeSerializer(_obter_oportunidade(pk)).data)
+
+
+class MudarEstagioView(APIView):
+    def post(self, request, pk: int):
+        entrada = MudarEstagioSerializer(data=request.data)
+        entrada.is_valid(raise_exception=True)
+        estagios.mudar_estagio(pk, entrada.validated_data["estagio"], entrada.validated_data["motivo_perda"])
         return Response(OportunidadeSerializer(_obter_oportunidade(pk)).data)
 
 

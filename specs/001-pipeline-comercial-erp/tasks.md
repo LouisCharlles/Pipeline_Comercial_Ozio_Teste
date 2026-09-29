@@ -296,7 +296,7 @@ mudança (quickstart, roteiro 3).
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T047 [P] [US3] Escrever `backend/tests/test_estagios.py`, cobrindo a tabela de transições de [data-model.md](./data-model.md) via `POST /api/oportunidades/{id}/estagio`:
+- [X] T047 [P] [US3] Escrever `backend/tests/test_estagios.py`, cobrindo a tabela de transições de [data-model.md](./data-model.md) via `POST /api/oportunidades/{id}/estagio`:
   - entre abertos, nos dois sentidos: 200 com `fechado_em=null`;
   - aberto → GANHO: `fechado_em` preenchido;
   - aberto → PERDIDO com `motivo_perda`: motivo salvo;
@@ -314,8 +314,8 @@ mudança (quickstart, roteiro 3).
 
 ### Implementation for User Story 3
 
-- [ ] T048 [US3] Implementar `backend/comercial/services/estagios.py` com a tabela de transições permitidas (dicionário origem → destinos, conforme data-model) e com `mudar_estagio(oportunidade_id, destino, motivo_perda="") -> Oportunidade`, seguindo as regras 1–7 de data-model: `transaction.atomic()` + `select_for_update()`; bloqueio se existe `Pedido` GERADO (`EstagioBloqueado` com "Oportunidade com pedido gerado não pode mudar de estágio."); `TransicaoInvalida` com mensagem que cita a origem e o destino; `fechado_em` e `motivo_perda` atualizados
-- [ ] T049 [US3] Adicionar `MudarEstagioSerializer` (`estagio`: `ChoiceField` com todos os estágios; `motivo_perda`: `CharField(max_length=500, required=False, allow_blank=True)`, mensagens em pt-BR) em `backend/comercial/serializers.py` e `MudarEstagioView` (`POST` → `mudar_estagio` → 200 com `OportunidadeSerializer`) em `backend/comercial/views.py`. Registrar `oportunidades/<int:pk>/estagio` em `backend/comercial/urls.py`. Rodar `make test`: T047 deve passar
+- [X] T048 [US3] Implementar `backend/comercial/services/estagios.py` com a tabela de transições permitidas (dicionário origem → destinos, conforme data-model) e com `mudar_estagio(oportunidade_id, destino, motivo_perda="") -> Oportunidade`, seguindo as regras 1–7 de data-model: `transaction.atomic()` + `select_for_update()`; bloqueio se existe `Pedido` GERADO (`EstagioBloqueado` com "Oportunidade com pedido gerado não pode mudar de estágio."); `TransicaoInvalida` com mensagem que cita a origem e o destino; `fechado_em` e `motivo_perda` atualizados
+- [X] T049 [US3] Adicionar `MudarEstagioSerializer` (`estagio`: `ChoiceField` com todos os estágios; `motivo_perda`: `CharField(max_length=500, required=False, allow_blank=True)`, mensagens em pt-BR) em `backend/comercial/serializers.py` e `MudarEstagioView` (`POST` → `mudar_estagio` → 200 com `OportunidadeSerializer`) em `backend/comercial/views.py`. Registrar `oportunidades/<int:pk>/estagio` em `backend/comercial/urls.py`. Rodar `make test`: T047 deve passar
 - [ ] T050 [P] [US3] Criar `frontend/app/features/oportunidades/components/ModalEstagio.tsx`, com os modos `ganho` ("Marcar como Ganho?", texto do protótipo, botão "Confirmar como Ganho"), `perdido` ("Marcar como Perdido?", texto do protótipo, `textarea` "Motivo da perda (opcional)" com `name="motivo_perda"` e `maxLength={500}`, botão `danger` "Confirmar como Perdido") e `reabrir` ("Reabrir oportunidade?", "A oportunidade volta para {estágio}; a data de fechamento e o motivo da perda serão apagados.", botão "Reabrir"). Ao confirmar, envia o `fetcher.Form` recebido por prop com `intent=mudar-estagio`, `estagio` e, no modo perdido, `motivo_perda`
 - [ ] T051 [US3] Criar `frontend/app/features/oportunidades/components/BarraEstagios.tsx` (card "Estágio"), usando `useFetcher({ key: "mudar-estagio" })`:
   - Mostra cinco botões na ordem de `ESTAGIOS`, com as cores do protótipo para o estágio atual.

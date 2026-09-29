@@ -145,6 +145,23 @@ class OportunidadeCriacaoSerializer(serializers.Serializer):
         return Oportunidade.objects.create(empresa=empresa, **validated_data)
 
 
+class MudarEstagioSerializer(serializers.Serializer):
+    estagio = serializers.ChoiceField(
+        choices=Estagio.choices,
+        error_messages={
+            "required": "Informe o estágio.",
+            "invalid_choice": "Estágio desconhecido.",
+        },
+    )
+    motivo_perda = serializers.CharField(
+        max_length=500,
+        required=False,
+        allow_blank=True,
+        default="",
+        error_messages={"max_length": "Use no máximo {max_length} caracteres."},
+    )
+
+
 class OportunidadeEdicaoSerializer(serializers.Serializer):
     titulo = _campo_texto(MSG_TITULO, required=False)
     empresa = _campo_texto(MSG_EMPRESA, required=False)
