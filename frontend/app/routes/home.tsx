@@ -1,3 +1,5 @@
-export default function Home() {
-  return <h1 className="text-xl font-semibold">Pipeline Comercial</h1>;
+import { redirect } from "react-router";
+
+export function loader() {
+  return redirect("/oportunidades");
 }

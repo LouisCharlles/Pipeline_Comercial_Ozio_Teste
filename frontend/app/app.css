@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@keyframes barra {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased;
