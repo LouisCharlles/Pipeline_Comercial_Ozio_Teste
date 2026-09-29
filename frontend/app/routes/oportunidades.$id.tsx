@@ -5,11 +5,12 @@ import { ErrorState } from "../components/ui/ErrorState";
 import { NaoEncontrado } from "../components/ui/NaoEncontrado";
 import { StageBadge } from "../components/ui/StageBadge";
 import { VoltarLink } from "../components/ui/VoltarLink";
-import { gerarPedido } from "../features/oportunidades/api.server";
+import { gerarPedido, mudarEstagio } from "../features/oportunidades/api.server";
 import { carregarOportunidade } from "../features/oportunidades/carregar.server";
+import { BarraEstagios } from "../features/oportunidades/components/BarraEstagios";
 import { CardPedido } from "../features/oportunidades/components/CardPedido";
 import { formatarData, formatarMoeda } from "../features/oportunidades/formato";
-import type { ResultadoAcao } from "../features/oportunidades/types";
+import type { Estagio, ResultadoAcao } from "../features/oportunidades/types";
 import type { Route } from "./+types/oportunidades.$id";
 
 export function meta({ loaderData }: Route.MetaArgs) {
@@ -28,6 +29,16 @@ export async function action({ request, params }: Route.ActionArgs): Promise<Res
 
   if (intent === "gerar-pedido") {
     const resposta = await gerarPedido(params.id);
+    return resposta.ok ? { ok: true } : { ok: false, ...resposta.erro };
+  }
+
+  if (intent === "mudar-estagio") {
+    const motivo = form.get("motivo_perda");
+    const resposta = await mudarEstagio(
+      params.id,
+      String(form.get("estagio") ?? "") as Estagio,
+      motivo === null ? undefined : String(motivo),
+    );
     return resposta.ok ? { ok: true } : { ok: false, ...resposta.erro };
   }
 
@@ -75,6 +86,8 @@ export default function DetalheOportunidade({ loaderData: op }: Route.ComponentP
               )}
             </div>
           </section>
+
+          <BarraEstagios oportunidade={op} />
         </div>
 
         <CardPedido oportunidade={op} />
