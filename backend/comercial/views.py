@@ -1,12 +1,11 @@
 """Endpoints REST. Views finas: validam a entrada e delegam regras aos serviços."""
 
-from django.db.models import Count
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from comercial.erros import NaoEncontrado
-from comercial.models import Estagio, Oportunidade
+from comercial.models import Oportunidade
 from comercial.serializers import (
     EmpresaSerializer,
     MudarEstagioSerializer,
@@ -16,7 +15,7 @@ from comercial.serializers import (
     OportunidadeSerializer,
     PedidoSerializer,
 )
-from comercial.services import empresas, estagios, pedidos
+from comercial.services import consultas, empresas, estagios, pedidos
 
 
 def _obter_oportunidade(pk: int) -> Oportunidade:
@@ -28,14 +27,13 @@ def _obter_oportunidade(pk: int) -> Oportunidade:
 
 class OportunidadeListaView(APIView):
     def get(self, request):
-        qs = Oportunidade.objects.select_related("empresa", "pedido")
-        por_estagio = dict(qs.order_by().values_list("estagio").annotate(total=Count("id")))
-        contagens = {e.value: por_estagio.get(e.value, 0) for e in Estagio}
-        total = sum(contagens.values())
+        resultados, contagens, total = consultas.filtrar_oportunidades(
+            request.query_params.get("estagio"), request.query_params.get("q")
+        )
         return Response(
             {
-                "resultados": OportunidadeResumoSerializer(qs, many=True).data,
-                "contagens": {"TODOS": total, **contagens},
+                "resultados": OportunidadeResumoSerializer(resultados, many=True).data,
+                "contagens": contagens,
                 "total_cadastradas": total,
             }
         )

@@ -351,7 +351,7 @@ trecho do nome da empresa e por trecho do título, recarregar a página com a UR
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T053 [P] [US4] Escrever `backend/tests/test_listagem.py`:
+- [X] T053 [P] [US4] Escrever `backend/tests/test_listagem.py`:
   - `?estagio=GANHO` devolve só as oportunidades em GANHO;
   - um `estagio` inválido é ignorado (lista todas);
   - `?q=horizonte` encontra pelo nome da empresa e `?q=LOGÍST` pelo título, sem diferenciar maiúsculas e minúsculas;
@@ -364,7 +364,7 @@ trecho do nome da empresa e por trecho do título, recarregar a página com a UR
 
 ### Implementation for User Story 4
 
-- [ ] T054 [US4] Criar `backend/comercial/services/consultas.py` com `filtrar_oportunidades(estagio: str | None, q: str | None) -> tuple[QuerySet, dict, int]` (resultados com `select_related`, contagens por estágio com a busca aplicada e total geral), aplicando trim em `q`, ignorando `estagio` inválido e usando `Q(titulo__icontains=q) | Q(empresa__nome__icontains=q)`. Mudar `OportunidadeListaView.get` em `backend/comercial/views.py` para ler `estagio` e `q` da query string e usar esse serviço. Rodar `make test`: T053 deve passar
+- [X] T054 [US4] Criar `backend/comercial/services/consultas.py` com `filtrar_oportunidades(estagio: str | None, q: str | None) -> tuple[QuerySet, dict, int]` (resultados com `select_related`, contagens por estágio com a busca aplicada e total geral), aplicando trim em `q`, ignorando `estagio` inválido e usando `Q(titulo__icontains=q) | Q(empresa__nome__icontains=q)`. Mudar `OportunidadeListaView.get` em `backend/comercial/views.py` para ler `estagio` e `q` da query string e usar esse serviço. Rodar `make test`: T053 deve passar
 - [ ] T055 [P] [US4] Criar `frontend/app/features/oportunidades/components/FiltroEstagios.tsx`: chips "Todos", "Lead", "Contato", "Proposta", "Ganho" e "Perdido", cada um com a contagem de `contagens`, como `<Link>` para `?estagio=X` que **preserva `q`** ("Todos" remove `estagio`). O chip ativo usa o estilo azul do protótipo e `aria-current="page"`
 - [ ] T056 [P] [US4] Criar `frontend/app/features/oportunidades/components/BuscaOportunidades.tsx`: um `<Form method="get">` com `input` `name="q"` (placeholder "Buscar por título ou empresa", `defaultValue` e `key` iguais ao `q` atual), um `hidden` `estagio` quando houver filtro, e o botão "Buscar". No `onSubmit`, se o `q` sem espaços ficar vazio, remove o campo antes de enviar, para não gerar `q=` na URL
 - [ ] T057 [US4] Atualizar `frontend/app/routes/oportunidades._index.tsx`:
