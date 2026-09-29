@@ -85,9 +85,14 @@ repetido aqui.
   - **Resposta inválida**: o simulador devolve um payload fora do contrato (sem número ou com
     tipo errado), e quem detecta o problema é a **validação do cliente**, não o simulador. Assim o
     caminho de validação é exercitado de verdade.
-  - **Deduplicação no ERP**: o simulador guarda `referencia → numero` em memória e devolve o mesmo
-    número para a mesma referência. É isso que torna seguro o retry depois de um timeout em que o
-    ERP "criou mesmo assim" (Edge Case 2).
+  - **Deduplicação no ERP**: o simulador **deriva o número da referência** (`ERP-` + 8 primeiros
+    caracteres do SHA-1 de `referencia`), então devolve sempre o mesmo número para a mesma
+    referência. É isso que torna seguro o retry depois de um timeout em que o ERP "criou mesmo
+    assim" (Edge Case 2).
+  - *Revisão durante a implementação*: a primeira versão usava um contador em memória, que
+    recomeçava a cada reinício do processo e gerava números já gravados no banco, violando o
+    UNIQUE de `numero_erp` (erro 500). Com o número derivado, não há estado em memória, a
+    numeração é estável entre reinícios e a deduplicação continua valendo depois de reiniciar.
 - **Troca de modo na demonstração**: alterar `ERP_MODO` no `.env` do backend e reiniciar o
   processo. O `quickstart.md` descreve o roteiro falha → retry com sucesso.
 - **Rationale**: é determinístico (Princípio IV), não precisa de um segundo servidor e não expõe

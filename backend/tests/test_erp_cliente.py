@@ -4,14 +4,7 @@ import pytest
 
 from erp.cliente import RespostaErp, obter_cliente_erp, validar_resposta
 from erp.erros import ErpErroServico, ErpRespostaInvalida, ErpTempoEsgotado
-from erp.simulado import ErpSimulado
-
-
-@pytest.fixture(autouse=True)
-def limpar_simulador():
-    ErpSimulado.limpar()
-    yield
-    ErpSimulado.limpar()
+from erp.simulado import numero_para
 
 
 def test_sucesso_devolve_numero(settings):
@@ -27,7 +20,7 @@ def test_mesma_referencia_devolve_mesmo_numero(settings):
     primeiro = cliente.criar_pedido("OPP-1", Decimal("10.00"))
     segundo = obter_cliente_erp().criar_pedido("OPP-1", Decimal("10.00"))
     outro = cliente.criar_pedido("OPP-2", Decimal("10.00"))
-    assert primeiro.numero == segundo.numero
+    assert primeiro.numero == segundo.numero == numero_para("OPP-1")
     assert outro.numero != primeiro.numero
 
 

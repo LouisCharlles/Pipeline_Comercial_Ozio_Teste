@@ -8,15 +8,11 @@ from django.db import IntegrityError, connection
 
 from comercial.models import Pedido
 from comercial.services import pedidos as servico_pedidos
-from erp.simulado import ErpSimulado
 
 
 @pytest.fixture(autouse=True)
 def erp_limpo(settings):
     settings.ERP_MODO = "sucesso"
-    ErpSimulado.limpar()
-    yield
-    ErpSimulado.limpar()
 
 
 def url(op_id: int) -> str:

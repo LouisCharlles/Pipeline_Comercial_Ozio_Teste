@@ -1,10 +1,13 @@
 """ERP simulado, determinístico, controlado por settings.ERP_MODO.
 
 Modos: sucesso | timeout | erro | resposta_invalida. O modo é lido a cada chamada.
-Como um ERP real idempotente, devolve o mesmo número para a mesma referência.
+
+Como um ERP real idempotente, devolve sempre o mesmo número para a mesma referência. O número é
+derivado da referência (e não de um contador em memória), então continua único e estável mesmo
+depois de o processo reiniciar.
 """
 
-import threading
+import hashlib
 import time
 from decimal import Decimal
 
@@ -14,20 +17,13 @@ from erp.cliente import RespostaErp, validar_resposta
 from erp.erros import ErpErroServico, ErpTempoEsgotado
 
 
-class ErpSimulado:
-    # Estado do "ERP" compartilhado por todas as instâncias do processo.
-    _pedidos: dict[str, str] = {}
-    _proximo = 2000
-    _lock = threading.Lock()
+def numero_para(referencia: str) -> str:
+    return "ERP-" + hashlib.sha1(referencia.encode()).hexdigest()[:8].upper()
 
+
+class ErpSimulado:
     def __init__(self, timeout_segundos: int):
         self.timeout_segundos = timeout_segundos
-
-    @classmethod
-    def limpar(cls) -> None:
-        with cls._lock:
-            cls._pedidos.clear()
-            cls._proximo = 2000
 
     def criar_pedido(self, referencia: str, valor: Decimal) -> RespostaErp:
         if settings.ERP_LATENCIA_MS:
@@ -44,10 +40,4 @@ class ErpSimulado:
         if modo != "sucesso":
             raise ErpErroServico(f"Modo do ERP simulado desconhecido: {modo!r}")
 
-        with self._lock:
-            numero = self._pedidos.get(referencia)
-            if numero is None:
-                numero = f"ERP-{ErpSimulado._proximo}"
-                ErpSimulado._proximo += 1
-                self._pedidos[referencia] = numero
-        return validar_resposta({"numero_pedido": numero, "referencia": referencia}, referencia)
+        return validar_resposta({"numero_pedido": numero_para(referencia), "referencia": referencia}, referencia)

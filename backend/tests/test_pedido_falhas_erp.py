@@ -5,7 +5,6 @@ from decimal import Decimal
 import pytest
 
 from comercial.models import Pedido
-from erp.simulado import ErpSimulado
 
 pytestmark = pytest.mark.django_db
 
@@ -13,9 +12,6 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture(autouse=True)
 def erp_limpo(settings):
     settings.ERP_MODO = "sucesso"
-    ErpSimulado.limpar()
-    yield
-    ErpSimulado.limpar()
 
 
 def url(op_id: int) -> str:
