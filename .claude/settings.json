@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:support.pipedrive.com)",
+      "WebFetch(domain:knowledge.hubspot.com)",
+      "mcp__plugin_figma_figma__get_design_context",
+      "Bash(npm -v)",
+      "Bash(psql --version)",
+      "WebFetch(domain:remix.run)",
+      "Bash(git status *)",
+      "Bash(git symbolic-ref *)"
+    ]
+  }
+}
