@@ -386,7 +386,7 @@ and search persisted in url`
 
 **Purpose**: documentação exigida pela constituição, consistência de estados e validação final.
 
-- [ ] T058 [P] Escrever `README.md` na raiz (Princípio IX), com as seções:
+- [X] T058 [P] Escrever `README.md` na raiz (Princípio IX), com as seções:
   - visão geral;
   - pré-requisitos (Docker, Python 3.12, Node ≥ 22.22);
   - como subir (`make db`, `make backend`, `make seed`, `make frontend`);
