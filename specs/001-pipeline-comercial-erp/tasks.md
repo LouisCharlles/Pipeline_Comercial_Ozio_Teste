@@ -396,13 +396,13 @@ and search persisted in url`
   - estrutura de pastas;
   - **decisões técnicas e trade-offs**: unicidade do pedido (OneToOne + `select_for_update` + `IntegrityError`, lock durante a chamada ao ERP), desenho da integração ERP (interface, simulador determinístico, referência externa para deduplicação), SSR (loaders no servidor, filtros na URL, API só chamada pelo servidor Node), validação só no DRF, contagens com a busca aplicada;
   - o que ficou fora de escopo e os possíveis extras.
-- [ ] T059 [P] Revisar a consistência dos estados de interface (Princípio VIII, SC-006) em `frontend/app/routes/*.tsx` e `frontend/app/features/oportunidades/components/*.tsx`:
+- [X] T059 [P] Revisar a consistência dos estados de interface (Princípio VIII, SC-006) em `frontend/app/routes/*.tsx` e `frontend/app/features/oportunidades/components/*.tsx`:
   - todas as telas usam os mesmos `ErrorState`, `NaoEncontrado`, `EmptyState`, `Alert`, `PendingBar` e botões com texto de progresso;
   - toda ação que dispara requisição fica desabilitada enquanto estiver pendente;
   - nenhuma tela fica em branco quando a API está fora do ar (testar derrubando o backend).
 
   Corrigir as divergências encontradas.
-- [ ] T060 [P] Conferir o uso em tela estreita (~375 px) das rotas em `frontend/app/routes/` (detalhe em uma coluna, tabela com rolagem horizontal, chips com quebra de linha, modal cabendo na tela) e ajustar as classes Tailwind onde for preciso
+- [X] T060 [P] Conferir o uso em tela estreita (~375 px) das rotas em `frontend/app/routes/` (detalhe em uma coluna, tabela com rolagem horizontal, chips com quebra de linha, modal cabendo na tela) e ajustar as classes Tailwind onde for preciso
 - [ ] T061 Rodar `make test` e `make typecheck` do zero (`docker compose down -v`, `make db`, migrações) e depois executar todos os roteiros do [quickstart.md](./quickstart.md), registrando em `specs/001-pipeline-comercial-erp/quickstart.md` qualquer correção de comando ou resultado esperado encontrada
 - [ ] T062 Revisar o histórico com `git log --oneline` antes da entrega: as mensagens devem seguir Conventional Commits, sem "wip" ou "ajustes"; se precisar, reescrever **apenas commits locais ainda não publicados** e confirmar com o autor antes
 

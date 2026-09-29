@@ -14,6 +14,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Sem favicon próprio: evita o 404 de /favicon.ico. */}
+        <link rel="icon" href="data:," />
         <Meta />
         <Links />
       </head>
@@ -42,9 +44,9 @@ function Cabecalho() {
               />
             </svg>
           </span>
-          <span className="text-sm font-semibold text-slate-900">Pipeline Comercial</span>
+          <span className="whitespace-nowrap text-sm font-semibold text-slate-900">Pipeline Comercial</span>
         </Link>
-        <Link to="/oportunidades/nova" className={classesBotao("primary", "sm")}>
+        <Link to="/oportunidades/nova" className={classesBotao("primary", "sm", "whitespace-nowrap")}>
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
