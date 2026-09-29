@@ -13,8 +13,9 @@ from comercial.serializers import (
     OportunidadeEdicaoSerializer,
     OportunidadeResumoSerializer,
     OportunidadeSerializer,
+    PedidoSerializer,
 )
-from comercial.services import empresas
+from comercial.services import empresas, pedidos
 
 
 def _obter_oportunidade(pk: int) -> Oportunidade:
@@ -55,6 +56,12 @@ class OportunidadeDetalheView(APIView):
         entrada.is_valid(raise_exception=True)
         entrada.save()
         return Response(OportunidadeSerializer(_obter_oportunidade(pk)).data)
+
+
+class GerarPedidoView(APIView):
+    def post(self, request, pk: int):
+        pedido, criado = pedidos.gerar_pedido(pk)
+        return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED if criado else status.HTTP_200_OK)
 
 
 class EmpresaSugestoesView(APIView):

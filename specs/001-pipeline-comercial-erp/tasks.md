@@ -219,19 +219,19 @@ máximo um pedido e o card mostra o estado real (quickstart, roteiros 4, 5 e 6).
 
 ### Tests for User Story 2 ⚠️ (OBRIGATÓRIOS — Princípios III e V)
 
-- [ ] T038 [P] [US2] Escrever `backend/tests/test_erp_cliente.py`:
+- [X] T038 [P] [US2] Escrever `backend/tests/test_erp_cliente.py`:
   - `ErpSimulado` em modo `sucesso` devolve `RespostaErp(numero="ERP-…")`;
   - a mesma `referencia` devolve o mesmo número (deduplicação);
   - os modos `timeout`, `erro` e `resposta_invalida` levantam `ErpTempoEsgotado`, `ErpErroServico` e `ErpRespostaInvalida`;
   - `validar_resposta` recusa payloads sem `numero_pedido`, com número vazio ou não-string, e com `referencia` diferente.
 
   Usar `settings.ERP_MODO` via fixture `settings` do pytest-django e uma fixture autouse que limpa o registro em memória do simulador.
-- [ ] T039 [P] [US2] Escrever `backend/tests/test_pedido_unicidade.py`:
+- [X] T039 [P] [US2] Escrever `backend/tests/test_pedido_unicidade.py`:
   - `POST /api/oportunidades/{id}/pedido` em GANHO com valor devolve 201 com `status="GERADO"`, `numero_erp`, `referencia_externa="OPP-{id}"` e `valor` copiado;
   - a segunda chamada devolve 200 com o mesmo `id`, e o ERP não é chamado de novo. Conferir com a fixture `espiao_erp` (criada em T016), que injeta o espião em `comercial.services.pedidos.obter_cliente_erp`, o nome **no módulo que o usa**, e não em `erp.cliente`;
   - **concorrência**: com `@pytest.mark.django_db(transaction=True)`, 10 threads chamam `gerar_pedido` ao mesmo tempo, cada uma fechando a própria conexão no fim (`connection.close()`). Resultado esperado: exatamente 1 linha em `Pedido`, um único `criado=True`, e o espião do ERP chamado 1 vez;
   - **última defesa**: com um pedido GERADO já no banco, forçar `IntegrityError` no caminho de criação (por `monkeypatch` da função interna de criação em `comercial.services.pedidos`); a resposta deve ser 200 com o pedido existente, nunca 500.
-- [ ] T040 [P] [US2] Escrever `backend/tests/test_pedido_falhas_erp.py`, parametrizado por modo:
+- [X] T040 [P] [US2] Escrever `backend/tests/test_pedido_falhas_erp.py`, parametrizado por modo:
   - `timeout` → 504 `erp_tempo_esgotado`; `erro` → 502 `erp_erro_servico`; `resposta_invalida` → 502 `erp_resposta_invalida`. Em todos, o corpo traz `pedido.status="FALHOU"`, `tentativas=1`, `numero_erp=null` e o `ultimo_erro_tipo` certo, e o banco fica com 1 linha FALHOU e sem `gerado_em`.
   - Retry: trocar para `sucesso` e chamar de novo → 201, **mesmo** `id` e `referencia_externa`, `tentativas=2`, `status="GERADO"`, `ultimo_erro` vazio.
   - O retry mantém o `valor` copiado mesmo se a oportunidade for editada para outro valor entre as tentativas.
@@ -242,14 +242,14 @@ máximo um pedido e o card mostra o estado real (quickstart, roteiros 4, 5 e 6).
 
 ### Implementation for User Story 2
 
-- [ ] T041 [P] [US2] Implementar `backend/erp/erros.py` (`ErroErp` base e as subclasses `ErpTempoEsgotado`, `ErpErroServico` e `ErpRespostaInvalida`, cada uma com a mensagem técnica) e `backend/erp/cliente.py`, que contém:
+- [X] T041 [P] [US2] Implementar `backend/erp/erros.py` (`ErroErp` base e as subclasses `ErpTempoEsgotado`, `ErpErroServico` e `ErpRespostaInvalida`, cada uma com a mensagem técnica) e `backend/erp/cliente.py`, que contém:
   - `RespostaErp` (dataclass congelada com `numero: str`);
   - `ClienteErp` (`typing.Protocol` com `criar_pedido(referencia: str, valor: Decimal) -> RespostaErp`);
   - `validar_resposta(bruta: object, referencia: str) -> RespostaErp`, que levanta `ErpRespostaInvalida` quando o formato difere de contracts/api.md;
   - `obter_cliente_erp() -> ClienteErp`, que devolve `ErpSimulado(timeout_segundos=settings.ERP_TIMEOUT_SEGUNDOS)`.
 
   Nenhum código fora de `backend/erp/` pode conhecer o `ErpSimulado`.
-- [ ] T042 [US2] Implementar `backend/erp/simulado.py` com a classe `ErpSimulado`:
+- [X] T042 [US2] Implementar `backend/erp/simulado.py` com a classe `ErpSimulado`:
   - um registro em memória no nível da classe (`dict[referencia, numero]`, protegido por `threading.Lock`), com o método de classe `limpar()` para os testes, e um contador sequencial que começa em 2000 e gera `ERP-{n}`;
   - `criar_pedido`:
     1. dorme `settings.ERP_LATENCIA_MS` ms;
@@ -259,14 +259,14 @@ máximo um pedido e o card mostra o estado real (quickstart, roteiros 4, 5 e 6).
     5. `resposta_invalida` → monta a resposta bruta `{"referencia": referencia}`, sem número, e a passa por `validar_resposta`;
     6. `sucesso` → reaproveita o número já registrado para a referência, ou gera um novo, e passa `{"numero_pedido": numero, "referencia": referencia}` por `validar_resposta`;
     7. modo desconhecido → `ErpErroServico`.
-- [ ] T043 [US2] Implementar `backend/comercial/services/pedidos.py` com `gerar_pedido(oportunidade_id: int) -> tuple[Pedido, bool]`, seguindo exatamente os passos 1–9 de "Serviço `gerar_pedido`" em [data-model.md](./data-model.md):
+- [X] T043 [US2] Implementar `backend/comercial/services/pedidos.py` com `gerar_pedido(oportunidade_id: int) -> tuple[Pedido, bool]`, seguindo exatamente os passos 1–9 de "Serviço `gerar_pedido`" em [data-model.md](./data-model.md):
   - Dentro do `transaction.atomic()` + `select_for_update()` da oportunidade: devolve o pedido GERADO existente com `criado=False`; valida o estágio (`EstagioInvalido`) e o valor (`ValorObrigatorio`); reaproveita o pedido FALHOU ou o cria com uma função interna `_criar_pedido(oportunidade)` (ponto de `monkeypatch` do T039); marca `PENDENTE` e soma `tentativas`; chama `obter_cliente_erp().criar_pedido(pedido.referencia_externa, pedido.valor)`. Importar com `from erp.cliente import obter_cliente_erp` no topo do módulo e chamar a função **a cada execução**, sem guardar o cliente em variável global, para que o `monkeypatch` de `comercial.services.pedidos.obter_cliente_erp` usado em T039 e T040 funcione.
   - Sucesso → grava GERADO, `numero_erp` e `gerado_em`, e limpa os erros.
   - `ErroErp` → grava FALHOU, `ultimo_erro_tipo` e `ultimo_erro`, e guarda a falha numa variável local.
   - **Depois** que o bloco atômico fecha (commit), se houve falha, levanta o `ErroDominio` correspondente (`ErpTempoEsgotadoErro` etc.) com `pedido` recarregado.
   - `IntegrityError` → busca de novo e devolve `(pedido_existente, False)`.
   - Registrar no log (`logging.getLogger(__name__)`) cada tentativa, com o resultado e a referência.
-- [ ] T044 [US2] Adicionar `GerarPedidoView` (`POST`, sem corpo) em `backend/comercial/views.py`, que chama `gerar_pedido` e devolve `PedidoSerializer` com 201 se `criado`, senão 200. Registrar `oportunidades/<int:pk>/pedido` em `backend/comercial/urls.py`. Rodar `make test`: T038–T040 devem passar
+- [X] T044 [US2] Adicionar `GerarPedidoView` (`POST`, sem corpo) em `backend/comercial/views.py`, que chama `gerar_pedido` e devolve `PedidoSerializer` com 201 se `criado`, senão 200. Registrar `oportunidades/<int:pk>/pedido` em `backend/comercial/urls.py`. Rodar `make test`: T038–T040 devem passar
 - [ ] T045 [P] [US2] Criar `frontend/app/features/oportunidades/components/CardPedido.tsx` com as props `oportunidade`, `erro?: ErroApi` (resultado da última ação) e `ocupado: boolean`. Título "Pedido no ERP" com ícone, e os 7 estados da tabela "Card Pedido no ERP" de [contracts/ui-rotas.md](./contracts/ui-rotas.md):
   - indisponível, sem valor (com link "Editar"), pronto, enviando (spinner + "Gerando pedido…" + "Comunicando com o ERP. Aguarde."), gerado, falhou e falhou fora de Ganho;
   - o botão fica num `fetcher.Form method="post"` com `<input type="hidden" name="intent" value="gerar-pedido">`, usando `useFetcher({ key: "gerar-pedido" })`;
