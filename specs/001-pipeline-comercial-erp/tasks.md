@@ -404,7 +404,7 @@ and search persisted in url`
   Corrigir as divergências encontradas.
 - [X] T060 [P] Conferir o uso em tela estreita (~375 px) das rotas em `frontend/app/routes/` (detalhe em uma coluna, tabela com rolagem horizontal, chips com quebra de linha, modal cabendo na tela) e ajustar as classes Tailwind onde for preciso
 - [X] T061 Rodar `make test` e `make typecheck` do zero (`docker compose down -v`, `make db`, migrações) e depois executar todos os roteiros do [quickstart.md](./quickstart.md), registrando em `specs/001-pipeline-comercial-erp/quickstart.md` qualquer correção de comando ou resultado esperado encontrada
-- [ ] T062 Revisar o histórico com `git log --oneline` antes da entrega: as mensagens devem seguir Conventional Commits, sem "wip" ou "ajustes"; se precisar, reescrever **apenas commits locais ainda não publicados** e confirmar com o autor antes
+- [X] T062 Revisar o histórico com `git log --oneline` antes da entrega: as mensagens devem seguir Conventional Commits, sem "wip" ou "ajustes"; se precisar, reescrever **apenas commits locais ainda não publicados** e confirmar com o autor antes
 
 **Commit**: `docs: add readme with setup, tests and technical decisions` · `fix(frontend): align
 loading, error and empty states across screens` (se houver ajustes) · `docs(quickstart): update
