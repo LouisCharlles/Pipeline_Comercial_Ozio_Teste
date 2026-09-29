@@ -134,7 +134,7 @@ e editar o título; os dados alterados aparecem na listagem e no detalhe. Acessa
 
 ### Tests for User Story 1 ⚠️ (escrever antes e ver falhar)
 
-- [ ] T026 [P] [US1] Escrever `backend/tests/test_oportunidades_api.py` cobrindo:
+- [X] T026 [P] [US1] Escrever `backend/tests/test_oportunidades_api.py` cobrindo:
   - `POST /api/oportunidades`:
     - cria com 201 e estágio padrão `LEAD`;
     - reaproveita a empresa ao receber `"  acme LOGÍSTICA "` quando "Acme Logística" existe, sem criar outra;
@@ -148,17 +148,17 @@ e editar o título; os dados alterados aparecem na listagem e no detalhe. Acessa
 
 ### Implementation for User Story 1
 
-- [ ] T027 [P] [US1] Implementar `backend/comercial/services/empresas.py`:
+- [X] T027 [P] [US1] Implementar `backend/comercial/services/empresas.py`:
   - `normalizar_nome(nome) -> str`: aplica `strip`.
   - `obter_ou_criar_por_nome(nome) -> Empresa`: faz `nome__iexact`; se não encontrar, cria dentro de `transaction.atomic()` (savepoint); se a criação levantar `IntegrityError`, busca de novo por `nome__iexact`.
   - `sugerir(q, limite=10) -> QuerySet`: `q` vazio → `none()`.
-- [ ] T028 [US1] Implementar `backend/comercial/serializers.py`:
+- [X] T028 [US1] Implementar `backend/comercial/serializers.py`:
   - `EmpresaSerializer` (`id`, `nome`);
   - `PedidoSerializer` (todos os campos do contrato);
   - `OportunidadeSerializer` (detalhe, com `empresa` e `pedido` aninhados; o `pedido` vem do reverse one-to-one e é `null` se não existir);
   - `OportunidadeResumoSerializer` (com `pedido_status` e `pedido_numero_erp`);
   - `OportunidadeEntradaSerializer`, com `titulo` (`CharField`, `max_length=200`, trim), `empresa` (`CharField`, `max_length=200`, trim), `valor` (`DecimalField(max_digits=14, decimal_places=2, min_value=0, allow_null=True, required=False)`, com string vazia convertida em `None` em `to_internal_value`) e `estagio` (`ChoiceField`, apenas os estágios abertos, padrão `LEAD`). Todas as mensagens `required`, `blank`, `invalid`, `min_value` e `invalid_choice` ficam exatamente como em contracts/api.md. `create()` e `update()` usam `obter_ou_criar_por_nome`. No `update`, o `validate` recusa `estagio` presente em `initial_data` com o erro de campo "Altere o estágio pelo detalhe da oportunidade.". O `DecimalField` MUST serializar como string com 2 casas.
-- [ ] T029 [US1] Implementar em `backend/comercial/views.py`:
+- [X] T029 [US1] Implementar em `backend/comercial/views.py`:
   - `OportunidadeListaView` (APIView): o `GET` usa `select_related("empresa", "pedido")` e devolve `resultados` (ordenação padrão), `contagens` (uma consulta agregada `values("estagio").annotate(Count("id"))`, completando os estágios ausentes com 0 e somando `TODOS`) e `total_cadastradas`; o `POST` valida com `OportunidadeEntradaSerializer` e devolve 201 com `OportunidadeSerializer`.
   - `OportunidadeDetalheView`: `GET` e `PATCH`; id inexistente → `NaoEncontrado`.
   - `EmpresaSugestoesView`: `GET ?q=`.
