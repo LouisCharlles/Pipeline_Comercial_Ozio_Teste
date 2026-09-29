@@ -55,7 +55,8 @@ repetido aqui.
   oportunidade, então não corre em paralelo com a geração do pedido.
 - **PENDENTE preso (dúvida nº 6)**: não acontece. O estado PENDENTE só existe dentro da transação.
   Se o processo morrer durante a chamada ao ERP, o rollback desfaz a criação do pedido (ou mantém
-  o FALHOU anterior), e a tela mostra "não concluído" com a opção de repetir. Isso atende à Edge
+  o FALHOU anterior). A requisição responde 500 `erro_interno`, a tela mostra "Erro inesperado.
+  Tente novamente." e o card volta ao estado anterior, com a opção de repetir. Isso atende à Edge
   Case 3. `PENDENTE` continua no enum para deixar o estado explícito durante a transação e para
   proteger contra leituras futuras fora dela; ele nunca é gravado de forma visível.
 - **Requisições simultâneas**: a segunda requisição espera o lock. Quando a primeira termina com
@@ -155,8 +156,9 @@ Nas falhas, o corpo da resposta traz o `pedido` atualizado (FALHOU, `tentativas`
 ## R10. Estilo e componentes de UI
 
 - **Decision**: **Tailwind CSS v4** (`@tailwindcss/vite`) com componentes próprios em
-  `app/components/ui/` (Button, Alert, FormField, Modal, Skeleton, StageBadge, EmptyState,
-  PendingBar), reproduzindo o protótipo do Figma Make.
+  `app/components/ui/` (Button, Alert, FormField, Modal, StageBadge, EmptyState, PendingBar,
+  ErrorState, NaoEncontrado), reproduzindo o protótipo do Figma Make. Os skeletons do protótipo
+  não são adotados (ver R11).
 - **Rationale**: o protótipo já está escrito com classes Tailwind, então a tradução para a
   implementação é direta. Os componentes são poucos e autorais (Princípio VII).
 - **Alternatives considered**: biblioteca de componentes (shadcn, MUI) (mais dependências e mais
@@ -177,9 +179,14 @@ Nas falhas, o corpo da resposta traz o `pedido` atualizado (FALHOU, `tentativas`
     Pedido). Um helper único, `mensagemDeErro()`, converte os códigos em texto.
   - **Vazio**: `<EmptyState>` com as variantes "Nenhuma oportunidade ainda" (+ "Nova
     oportunidade") e "Nada encontrado" (+ "Limpar filtros"), conforme a spec.
-  - O skeleton do protótipo só aparece em navegação client-side do detalhe; na listagem, a
-    primeira carga nunca mostra skeleton (FR-017).
+  - **Sem skeletons**: como os loaders rodam no servidor e não há `clientLoader`/`HydrateFallback`,
+    o React Router mantém a tela atual até os dados chegarem. Por isso, o único indicador de
+    carregamento em navegação é a `<PendingBar>` (mais a opacidade reduzida na listagem). Os
+    skeletons do protótipo (`TableRowSkeleton`, `DetailSkeleton`) nunca apareceriam, então não
+    são implementados (Princípio II).
 - **Rationale**: é um padrão único para as quatro telas, como pede a SC-006.
+- **Alternatives considered**: `clientLoader` + `HydrateFallback` para mostrar skeleton na
+  navegação client-side (duplica o carregamento de dados no cliente sem ganho para o escopo).
 
 ## R12. Testes
 

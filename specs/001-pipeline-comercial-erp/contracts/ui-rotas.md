@@ -29,7 +29,7 @@ revalida (detalhe).
 |---|---|---|---|---|
 | Listagem | 1ª carga via SSR (sem indicador); filtros → `<PendingBar>` + opacidade | `ErrorBoundary`: "Não foi possível carregar" + "Tentar novamente" | — | "Nenhuma oportunidade ainda" + "Nova oportunidade" / "Nada encontrado" + "Limpar filtros" |
 | Formulário (nova/editar) | botão "Criando…"/"Salvando…" desabilitado, campos desabilitados | editar: 404 → "Oportunidade não encontrada" | `campos` junto aos campos + `<Alert>` geral no topo; valores mantidos | — |
-| Detalhe | skeleton só em navegação client-side | 404 → "Oportunidade não encontrada" + "Voltar para oportunidades"; outros → "Não foi possível carregar" | `<Alert>` no bloco afetado (barra de estágio ou card Pedido) | — |
+| Detalhe | 1ª carga via SSR; navegação → `<PendingBar>` (tela anterior mantida até os dados chegarem); envios com botão desabilitado e texto de progresso | 404 → "Oportunidade não encontrada" + "Voltar para oportunidades"; outros → "Não foi possível carregar" | `<Alert>` no bloco afetado (barra de estágio ou card Pedido) | — |
 
 ## Card "Pedido no ERP" (detalhe)
 

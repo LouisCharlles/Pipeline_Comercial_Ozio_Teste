@@ -28,7 +28,7 @@ oportunidades.
 ## Testes
 
 ```bash
-make test        # pytest no backend, contra o PostgreSQL do compose
+make test        # sobe o PostgreSQL e cria o venv se preciso; roda o pytest do backend
 make typecheck   # react-router typegen && tsc --noEmit no frontend
 ```
 

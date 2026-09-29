@@ -160,8 +160,8 @@ frontend/
     │   ├── formato.ts           # moeda BRL, datas pt-BR, rótulos de estágio
     │   └── components/          # OportunidadeForm, EmpresaInput, TabelaOportunidades,
     │                            # FiltroEstagios, BarraEstagios, CardPedido, ModalEstagio
-    └── components/ui/           # Button, Alert, FormField, Modal, Skeleton, StageBadge,
-                                 # EmptyState, PendingBar
+    └── components/ui/           # Button, Alert, FormField, Modal, StageBadge,
+                                 # EmptyState, PendingBar, ErrorState, NaoEncontrado
 ```
 
 **Structure Decision**: aplicação web em monorepo, com `backend/` (Django, um app `comercial` e o
